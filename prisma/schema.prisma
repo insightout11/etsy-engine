@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Scan {
+  id           Int           @id @default(autoincrement())
+  keyword      String
+  createdAt    DateTime      @default(now()) @map("created_at")
+  optionsJson  String        @map("options_json")
+  status       String        @default("queued")
+  // status values: queued | fetching | analyzing | drafting | complete | error | needs_review
+  errorMessage String?       @map("error_message")
+
+  scanListings ScanListing[]
+  signals      Signal?
+  brief        Brief?
+  decision     Decision?
+
+  @@map("scans")
+}
+
+model Listing {
+  id            Int           @id @default(autoincrement())
+  etsyListingId String        @unique @map("etsy_listing_id")
+  shopId        String        @map("shop_id")
+  title         String
+  priceAmount   Float         @map("price_amount")
+  currency      String
+  quantity      Int           @default(0)
+  numFavorers   Int           @default(0) @map("num_favorers")
+  tags          String        @default("[]") // JSON array of strings
+  rawJson       String        @map("raw_json")
+  fetchedAt     DateTime      @default(now()) @map("fetched_at")
+
+  scanListings  ScanListing[]
+
+  @@map("listings")
+}
+
+model ScanListing {
+  scanId    Int     @map("scan_id")
+  listingId Int     @map("listing_id")
+  rankIndex Int     @map("rank_index")
+
+  scan      Scan    @relation(fields: [scanId], references: [id], onDelete: Cascade)
+  listing   Listing @relation(fields: [listingId], references: [id])
+
+  @@id([scanId, listingId])
+  @@map("scan_listings")
+}
+
+model Signal {
+  id          Int      @id @default(autoincrement())
+  scanId      Int      @unique @map("scan_id")
+  signalsJson String   @map("signals_json")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  scan        Scan     @relation(fields: [scanId], references: [id], onDelete: Cascade)
+
+  @@map("signals")
+}
+
+model Brief {
+  id            Int      @id @default(autoincrement())
+  scanId        Int      @unique @map("scan_id")
+  briefJson     String   @map("brief_json")
+  briefMdPath   String?  @map("brief_md_path")
+  qaJson        String   @map("qa_json")
+  attemptCount  Int      @default(1) @map("attempt_count")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  scan          Scan     @relation(fields: [scanId], references: [id], onDelete: Cascade)
+
+  @@map("briefs")
+}
+
+model Decision {
+  scanId    Int      @unique @map("scan_id")
+  decision  String   // "build" | "kill" | "hold"
+  notes     String   @default("")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  scan      Scan     @relation(fields: [scanId], references: [id], onDelete: Cascade)
+
+  @@map("decisions")
+}

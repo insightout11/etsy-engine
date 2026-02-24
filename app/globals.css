@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --risk-red: #ef4444;
+  --risk-yellow: #eab308;
+  --risk-green: #22c55e;
+  --accent: #6366f1;
+  --surface: #1a1a2e;
+  --surface-raised: #16213e;
+  --surface-border: #2d2d4e;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+}
+
+body {
+  background-color: #0f0f1a;
+  color: var(--text-primary);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1a1a2e;
+}
+::-webkit-scrollbar-thumb {
+  background: #2d2d4e;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
+}
+
+/* Risk color utilities */
+.risk-red { color: var(--risk-red); }
+.risk-yellow { color: var(--risk-yellow); }
+.risk-green { color: var(--risk-green); }
+.bg-risk-red { background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); }
+.bg-risk-yellow { background-color: rgba(234, 179, 8, 0.15); border-color: rgba(234, 179, 8, 0.3); }
+.bg-risk-green { background-color: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.3); }
+
+/* Progress stage animations */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
