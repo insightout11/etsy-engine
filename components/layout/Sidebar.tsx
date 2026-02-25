@@ -13,6 +13,7 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1">
+        <SidebarLink href="/queue" label="Queue" icon="🔍" />
         <SidebarLink href="/scan" label="Scan" icon="⚡" />
         <SidebarLink href="/briefs" label="History" icon="📋" />
       </nav>
