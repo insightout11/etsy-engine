@@ -1,0 +1,14 @@
+# Example seeds for digital product keyword discovery
+# Edit this file with your own seeds (one per line)
+# Lines starting with # are ignored
+
+wedding planner printable
+budget tracker
+meal planner template
+habit tracker
+invoice template
+resume template
+social media calendar
+project tracker
+reading log
+gratitude journal
