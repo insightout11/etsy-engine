@@ -89,3 +89,26 @@ model Decision {
 
   @@map("decisions")
 }
+
+model KeywordCandidate {
+  id        Int      @id @default(autoincrement())
+  keyword   String   @unique
+  seed      String?
+  track     String   @default("digital")   // "digital" | "pod" | "unknown"
+  status    String   @default("new")       // "new" | "scored" | "promoted" | "scanned" | "rejected" | "error"
+  score     Float?
+  scoreJson String?  @map("score_json")    // JSON: CandidateScore
+  notes     String   @default("")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("keyword_candidates")
+}
+
+model QueueSettings {
+  id        Int     @id @default(1)
+  autoBatch Boolean @default(false) @map("auto_batch")
+  paused    Boolean @default(false)
+
+  @@map("queue_settings")
+}
