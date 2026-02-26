@@ -1,5 +1,7 @@
-import { getEtsyClient } from "@/lib/etsy/client";
+import fs from "fs";
+import path from "path";
 import { computeSignals } from "@/lib/signals/index";
+import type { EtsyListing } from "@/types/etsy";
 import {
   SIGNAL_WEIGHTS,
   CandidateScoreSchema,
@@ -10,9 +12,40 @@ function clamp(val: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, val));
 }
 
+function isFixtureMode(): boolean {
+  return (
+    process.env.ETSY_FIXTURE_MODE === "1" ||
+    !process.env.ETSY_API_KEY ||
+    !process.env.ETSY_ACCESS_TOKEN
+  );
+}
+
+function loadFixture(keyword: string): EtsyListing[] {
+  const kw = keyword.toLowerCase();
+  let filename: string;
+  if (kw.includes("wedding")) {
+    filename = "wedding-planner-printable.json";
+  } else if (kw.includes("budget")) {
+    filename = "budget-tracker.json";
+  } else {
+    filename = "generic-digital.json";
+  }
+  const filePath = path.join(process.cwd(), "fixtures", "etsy", filename);
+  const raw = fs.readFileSync(filePath, "utf8");
+  return JSON.parse(raw) as EtsyListing[];
+}
+
+async function fetchListings(keyword: string): Promise<EtsyListing[]> {
+  if (isFixtureMode()) {
+    return loadFixture(keyword);
+  }
+  const { getEtsyClient } = await import("@/lib/etsy/client");
+  const { results } = await getEtsyClient().searchListings(keyword, 25);
+  return results;
+}
+
 export async function scoreCandidate(keyword: string): Promise<CandidateScore> {
-  const client = getEtsyClient();
-  const { results: listings } = await client.searchListings(keyword, 20);
+  const listings = await fetchListings(keyword);
 
   const signals = await computeSignals(listings, keyword);
 
