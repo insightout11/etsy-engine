@@ -5,9 +5,6 @@ function Shot({ title, desc }: { title: string; desc: string }) {
     <div className="rounded-xl border border-[#2d2d4e] bg-[#0d0d1f] p-4 shadow-sm">
       <div className="text-sm font-semibold text-slate-100">{title}</div>
       <div className="mt-1 text-sm text-slate-400">{desc}</div>
-      <div className="mt-4 rounded-lg border border-[#2d2d4e] bg-[#0f0f1a] p-3 text-xs text-slate-400">
-        Screenshot placeholder (optional). Reviewers can also click the live UI links above.
-      </div>
     </div>
   );
 }
